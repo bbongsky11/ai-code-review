@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: ai-code-review
+
+
+core:
+  github:
+    token: ${TOKEN}
+  gemini:
+    api-key: ${API_KEY}
