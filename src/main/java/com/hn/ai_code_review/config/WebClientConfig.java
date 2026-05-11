@@ -14,13 +14,19 @@ public class WebClientConfig {
 
     @Bean
     public WebClient githubWebClient() {
-
         return WebClient.builder()
                 .baseUrl("https://api.github.com")
                 .defaultHeader(
                         HttpHeaders.AUTHORIZATION,
                         "Bearer " + githubToken
                 )
+                .build();
+    }
+
+    @Bean
+    public WebClient geminiWebClient() {
+        return WebClient.builder()
+                .baseUrl("https://generativelanguage.googleapis.com")
                 .build();
     }
 

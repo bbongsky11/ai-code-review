@@ -1,16 +1,22 @@
 package com.hn.ai_code_review.service;
 
 import com.hn.ai_code_review.dto.GithubWebhookRequest;
+import com.hn.ai_code_review.dto.PullRequestFile;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class GithubService {
-    private final WebClient webClient;
 
-    public String getPullRequestFiles(GithubWebhookRequest payload) {
+    @Qualifier("githubWebClient")
+    private final WebClient githubWebClient;
+
+    public List<PullRequestFile> getPullRequestFiles(GithubWebhookRequest payload) {
 
         String owner = payload.getRepository()
                 .getOwner()
@@ -20,13 +26,14 @@ public class GithubService {
         Integer prNumber = payload.getPull_request()
                 .getNumber();
 
-        return webClient.get()
+        return githubWebClient.get()
                 .uri("/repos/" + owner +
                         "/" + repo +
                         "/pulls/" + prNumber +
                         "/files")
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToFlux(PullRequestFile.class)
+                .collectList()
                 .block();
     }
 }
